@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#55764b">
+<title>Ферма Яиц</title>
+<link rel="icon" href="assets/hero.png">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/verity-theme.css">
+<link rel="stylesheet" href="css/hud.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<!-- Глобальные объявления: только белый жирный текст -->
+<div id="announce" aria-live="polite"></div>
+
+<div id="hud" hidden>
+  <!-- Левый верхний блок: монеты, под ними кнопки, ниже зона и события. Всё в одной колонке, ничего не лежит друг на друге. -->
+  <div id="tl">
+    <div class="chip coin" id="coinChip"><i class="coinIco"></i><b id="coins">0</b></div>
+    <div id="tr">
+      <button class="rbtn" id="bBag" type="button" title="Питомцы (B)" aria-label="Питомцы"><svg viewBox="0 0 24 24"><path d="M6 8h12l1.5 12h-15zM9 8V6a3 3 0 016 0v2" /></svg><span id="bagCount"></span></button>
+      <button class="rbtn" id="bTop" type="button" title="Лидеры" aria-label="Лидеры"><svg viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 01-10 0zM7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3M12 14v4M8 20h8"/></svg></button>
+      <button class="rbtn admin" id="bAdmin" type="button" title="Админ-панель" aria-label="Админ-панель" hidden><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></button>
+      <button class="rbtn" id="bSettings" type="button" title="Настройки" aria-label="Настройки"><svg viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7z"/><path d="M19.4 13.5a7.8 7.8 0 000-3l2-1.5-2-3.4-2.4 1a8 8 0 00-2.6-1.5L14 2h-4l-.4 3.1A8 8 0 007 6.6l-2.4-1-2 3.4 2 1.5a7.8 7.8 0 000 3l-2 1.5 2 3.4 2.4-1a8 8 0 002.6 1.5L10 22h4l.4-3.1a8 8 0 002.6-1.5l2.4 1 2-3.4z"/></svg></button>
+      <button class="rbtn" id="bSound" type="button" title="Звук" aria-label="Звук"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11"/></svg></button>
+      <button class="rbtn" id="bOut" type="button" title="Выйти" aria-label="Выйти"><svg viewBox="0 0 24 24"><path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"/></svg></button>
+    </div>
+    <div class="chip small" id="cropChip" hidden></div>
+    <div class="chip small" id="zoneChip"></div>
+    <div id="events" aria-label="Активные события"></div>
+  </div>
+
+  <!-- Правая панель разделов (все окна игры; нижний ряд кнопок удалён, он дублировал эту панель) -->
+  <nav id="rightSections" aria-label="Разделы фермы">
+    <button class="sideSection" id="sideEggShop" type="button" title="Магазин" aria-label="Магазин"><span>🥚</span><b>Магазин</b></button>
+    <button class="sideSection" id="sideIncubator" type="button" title="Инкубатор" aria-label="Инкубатор"><span>🐣</span><b>Инкубатор</b></button>
+    <button class="sideSection" id="sidePlantEggs" type="button" title="Посадка" aria-label="Посадка"><span>🌱</span><b>Посадка</b></button>
+    <button class="sideSection" id="sideMarket" type="button" title="Рынок" aria-label="Рынок"><span>🧺</span><b>Рынок</b></button>
+    <button class="sideSection" id="sideRating" type="button" title="Рейтинг" aria-label="Рейтинг"><span>🏆</span><b>Рейтинг</b></button>
+    <button class="sideSection" id="sideDaily" type="button" title="Бонус дня" aria-label="Бонус дня"><span>🎁</span><b>Бонус</b></button>
+    <button class="sideSection" id="sideAch" type="button" title="Достижения" aria-label="Достижения"><span>📜</span><b>Задания</b></button>
+    <button class="sideSection" id="sideUpgrades" type="button" title="Улучшения" aria-label="Улучшения"><span>✨</span><b>Улучшения</b></button>
+    <button class="sideSection" id="sideCatalog" type="button" title="Каталог" aria-label="Каталог"><span>📖</span><b>Каталог</b></button>
+    <button class="sideSection adminSide" id="sideAdmin" type="button" title="Админ" aria-label="Админ" hidden><span>🛡️</span><b>Админ</b></button>
+  </nav>
+
+  <!-- Кнопка действия (справа внизу на телефоне, по центру внизу на компьютере) и джойстик (слева внизу) -->
+  <button id="prompt" class="prompt" type="button" hidden><kbd>E</kbd><span class="pt"></span><span class="ps"></span></button>
+  <div id="joy" hidden><div id="knob"></div></div>
+</div>
+
+<div id="toasts"></div>
+<div id="tutorial" hidden></div>
+<div id="pollDock" hidden></div>
+<div id="netbar" hidden>Нет связи с сервером. Пробую снова…</div>
+
+<div id="modal" hidden><div class="mbox" role="dialog" aria-modal="true"><div class="mhead"><h2 id="mtitle"></h2><button class="mx" id="mclose" aria-label="Закрыть">×</button></div><div id="mbody"></div></div></div>
+
+<div id="hatch" hidden>
+  <canvas id="hc" width="420" height="420"></canvas>
+  <div id="hcard" hidden>
+    <div id="hrar"></div><h3 id="hname"></h3><p id="hinc"></p>
+    <div class="row"><button class="btn gold" id="hplace">Поставить на стойку</button><button class="btn" id="hok">Ок</button></div>
+  </div>
+</div>
+
+<div id="auth">
+  <div class="acard">
+    <img class="alogo" src="assets/hero.png" alt="Ферма Яиц">
+    <h1>Ферма Яиц</h1>
+    <p class="asub">Вход и регистрация только по нику и паролю</p>
+    <div id="aconf" class="amsg err" hidden></div>
+    <div id="aform">
+      <div class="tabs"><button class="tab on" data-t="in" type="button">Вход</button><button class="tab" data-t="up" type="button">Регистрация</button></div>
+      <form id="af" autocomplete="on" novalidate>
+        <label id="nickRow">Игровой ник<input id="aNick" autocomplete="username" maxlength="18" placeholder="Например: Ravex_12"></label>
+        <label id="passRow">Пароль<input id="aPass" type="password" autocomplete="current-password" minlength="6" placeholder="Минимум 6 символов"></label>
+        <label id="ownerKeyRow" hidden>Ключ владельца<input id="aOwnerKey" type="password" autocomplete="off" placeholder="Одноразовый ключ владельца"></label>
+        <div id="amsg" class="amsg" hidden></div>
+        <button class="btn gold big" id="asubmit" type="submit">Войти</button>
+      </form>
+    </div>
+    <div id="astep" hidden></div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/art.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
